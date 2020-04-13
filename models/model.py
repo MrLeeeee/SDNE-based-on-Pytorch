@@ -16,11 +16,11 @@ class MNN(nn.Module):
         self.alpha = alpha
 
     def forward(self, adj_batch, adj_mat, b_mat):
-        t0 = self.encode0(adj_batch)
-        t0 = self.encode1(t0)
+        t0 = F.leaky_relu(self.encode0(adj_batch))
+        t0 = F.leaky_relu(self.encode1(t0))
         embedding = t0
-        t0 = self.decode0(t0)
-        t0 = self.decode1(t0)
+        t0 = F.leaky_relu(self.decode0(t0))
+        t0 = F.leaky_relu(self.decode1(t0))
         embedding_norm = torch.sum(embedding * embedding, dim=1, keepdim=True)
         L_1st = torch.sum(adj_mat * (embedding_norm -
                                      2 * torch.mm(embedding, torch.transpose(embedding, dim0=0, dim1=1))
